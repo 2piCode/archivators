@@ -7,8 +7,6 @@
 #include <unordered_map>
 
 #include "archivator.h"
-#include "file_streams.h"
-
 class HuffmanArchivator : public Archivator {
    public:
     HuffmanArchivator() = default;
@@ -50,9 +48,6 @@ class HuffmanArchivator : public Archivator {
     const char RIGHT_BRANCH_KEY = '1';
 
     static constexpr std::size_t BIT_PER_SYMBOL = 8;
-
-    FileStreams CheckFiles(const std::filesystem::path& input_file,
-                           const std::filesystem::path& output_file) const;
 
     std::shared_ptr<HuffmanNode> FormHuffmanTree(
         const std::unordered_map<char, int>& char_frequency) const;

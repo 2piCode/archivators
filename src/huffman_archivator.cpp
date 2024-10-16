@@ -68,12 +68,6 @@ void HuffmanArchivator::decompress(
     output_file.close();
 }
 
-FileStreams HuffmanArchivator::CheckFiles(
-    const std::filesystem::path& input_file,
-    const std::filesystem::path& output_file) const {
-    return FileStreams(input_file, output_file);
-}
-
 std::shared_ptr<HuffmanArchivator::HuffmanNode>
 HuffmanArchivator::FormHuffmanTree(
     const std::unordered_map<char, int>& char_frequency) const {
