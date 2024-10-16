@@ -3,30 +3,27 @@
 #include <iostream>
 #include <memory>
 
-#include "archivator.h"
+#include "huffman_archivator.h"
 
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        std::cout << "Использование: " << argv[0]
-                  << " <входной файл> <выходной файл>\n";
+    if (argc != 4) {
+        std::cout << "Need to use: <input_file> <output_compress_file> "
+                     "<output_decompress_file>"
+                  << std::endl;
         return 1;
     }
 
-    std::filesystem::path inputFile = argv[1];
-    std::string outputFile = argv[2];
+    std::filesystem::path input_file = argv[1];
+    std::filesystem::path output_compress_file = argv[2];
+    std::filesystem::path output_decompress_file = argv[3];
 
-    std::ifstream inFile(inputFile, std::ios::binary);
-    if (!inFile) {
-        std::cerr << "Не удалось открыть входной файл.\n";
-        return 1;
-    }
+    std::unique_ptr<Archivator> archivator =
+        std::make_unique<HuffmanArchivator>();
 
-    // Заменить на реализацию архиватора
-    std::unique_ptr<Archivator> archivator = std::make_unique<Archivator>();
+    archivator->compress(input_file, output_compress_file);
+    archivator->decompress(output_compress_file, output_decompress_file);
 
-    archivator->compress(inputFile, outputFile);
-
-    std::cout << "Архивация завершена.\n" << std::endl;
+    std::cout << "Proccess completed" << std::endl;
 
     return 0;
 }

@@ -7,10 +7,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(HEADERS include/archivator.h
-            include/haffman_archivator.h
+            include/huffman_archivator.h
+            include/file_streams.h
 )
 
-set (SOURCES src/main.cpp)
+set (SOURCES src/main.cpp
+             src/huffman_archivator.cpp)
 
 add_executable(archivator ${SOURCES})
 
