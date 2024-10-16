@@ -49,23 +49,27 @@ class HuffmanArchivator : public Archivator {
     const char LEFT_BRANCH_KEY = '0';
     const char RIGHT_BRANCH_KEY = '1';
 
+    static constexpr std::size_t BIT_PER_SYMBOL = 8;
+
     FileStreams CheckFiles(const std::filesystem::path& input_file,
-                           const std::filesystem::path& output_file);
+                           const std::filesystem::path& output_file) const;
 
     std::shared_ptr<HuffmanNode> FormHuffmanTree(
-        const std::unordered_map<char, int>& char_frequency);
+        const std::unordered_map<char, int>& char_frequency) const;
     void BuildCodeMap(const std::shared_ptr<HuffmanNode>& root,
-                      const std::string& str, huffman_code_map& out_code_map);
+                      const std::string& str,
+                      huffman_code_map& out_code_map) const;
     void WriteHeader(std::ofstream& output_file,
-                     const huffman_code_map& code_map);
+                     const huffman_code_map& code_map) const;
     void WriteEncodedText(std::ifstream& input_file, std::ofstream& output_file,
-                          huffman_code_map& code_map);
+                          huffman_code_map& code_map) const;
 
-    void ReadHeader(std::ifstream& input_file, huffman_code_map& out_code_map);
+    void ReadHeader(std::ifstream& input_file,
+                    huffman_code_map& out_code_map) const;
     std::shared_ptr<HuffmanNode> FormHuffmanTree(
-        const huffman_code_map& code_map);
+        const huffman_code_map& code_map) const;
     void ReadEncodedString(std::ifstream& input_file,
-                           std::string& out_encoded_string);
+                           std::string& out_encoded_string) const;
 };
 
 #endif

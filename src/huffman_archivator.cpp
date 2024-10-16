@@ -70,13 +70,13 @@ void HuffmanArchivator::decompress(
 
 FileStreams HuffmanArchivator::CheckFiles(
     const std::filesystem::path& input_file,
-    const std::filesystem::path& output_file) {
+    const std::filesystem::path& output_file) const {
     return FileStreams(input_file, output_file);
 }
 
 std::shared_ptr<HuffmanArchivator::HuffmanNode>
 HuffmanArchivator::FormHuffmanTree(
-    const std::unordered_map<char, int>& char_frequency) {
+    const std::unordered_map<char, int>& char_frequency) const {
     huffman_priority_queue pq;
     for (auto [symbol, frequency] : char_frequency) {
         pq.push(std::make_shared<HuffmanNode>(symbol, frequency));
@@ -100,7 +100,7 @@ HuffmanArchivator::FormHuffmanTree(
 
 void HuffmanArchivator::BuildCodeMap(const std::shared_ptr<HuffmanNode>& root,
                                      const std::string& str,
-                                     huffman_code_map& out_code_map) {
+                                     huffman_code_map& out_code_map) const {
     if (!root) return;
 
     if (!root->left && !root->right) {
@@ -112,7 +112,7 @@ void HuffmanArchivator::BuildCodeMap(const std::shared_ptr<HuffmanNode>& root,
 }
 
 void HuffmanArchivator::WriteHeader(std::ofstream& output_file,
-                                    const huffman_code_map& code_map) {
+                                    const huffman_code_map& code_map) const {
     size_t uniqiue_chars_count = code_map.size();
     output_file.write(reinterpret_cast<const char*>(&uniqiue_chars_count),
                       sizeof(uniqiue_chars_count));
@@ -128,27 +128,28 @@ void HuffmanArchivator::WriteHeader(std::ofstream& output_file,
 
 void HuffmanArchivator::WriteEncodedText(std::ifstream& input_file,
                                          std::ofstream& output_file,
-                                         huffman_code_map& code_map) {
+                                         huffman_code_map& code_map) const {
     char ch;
     std::string encoded_string = "";
     while (input_file.get(ch)) {
         encoded_string += code_map[ch];
     }
 
-    int padding = 8 - (encoded_string.size() % 8);
+    int padding = BIT_PER_SYMBOL - (encoded_string.size() % BIT_PER_SYMBOL);
     for (int i = 0; i < padding; ++i) encoded_string += PADDING_KEY;
 
     output_file.write(reinterpret_cast<const char*>(&padding), sizeof(padding));
 
-    for (size_t i = 0; i < encoded_string.size(); i += 8) {
-        std::bitset<8> bits(encoded_string.substr(i, 8));
+    for (size_t i = 0; i < encoded_string.size(); i += BIT_PER_SYMBOL) {
+        std::bitset<BIT_PER_SYMBOL> bits(
+            encoded_string.substr(i, BIT_PER_SYMBOL));
         char byte = static_cast<char>(bits.to_ulong());
         output_file.put(byte);
     }
 }
 
 void HuffmanArchivator::ReadHeader(std::ifstream& input_file,
-                                   huffman_code_map& out_code_map) {
+                                   huffman_code_map& out_code_map) const {
     size_t unique_chars_count;
     input_file.read(reinterpret_cast<char*>(&unique_chars_count),
                     sizeof(unique_chars_count));
@@ -165,7 +166,7 @@ void HuffmanArchivator::ReadHeader(std::ifstream& input_file,
 }
 
 std::shared_ptr<HuffmanArchivator::HuffmanNode>
-HuffmanArchivator::FormHuffmanTree(const huffman_code_map& code_map) {
+HuffmanArchivator::FormHuffmanTree(const huffman_code_map& code_map) const {
     auto root = std::make_shared<HuffmanNode>();
     for (const auto& [symbol, code] : code_map) {
         auto current = root;
@@ -187,15 +188,15 @@ HuffmanArchivator::FormHuffmanTree(const huffman_code_map& code_map) {
     return root;
 }
 
-void HuffmanArchivator::ReadEncodedString(std::ifstream& input_file,
-                                          std::string& out_encoded_string) {
+void HuffmanArchivator::ReadEncodedString(
+    std::ifstream& input_file, std::string& out_encoded_string) const {
     int padding;
     input_file.read(reinterpret_cast<char*>(&padding), sizeof(padding));
 
     out_encoded_string = "";
     char byte;
     while (input_file.get(byte)) {
-        std::bitset<8> bits(static_cast<unsigned char>(byte));
+        std::bitset<BIT_PER_SYMBOL> bits(static_cast<unsigned char>(byte));
         out_encoded_string += bits.to_string();
     }
 
