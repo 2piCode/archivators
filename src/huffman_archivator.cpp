@@ -1,6 +1,7 @@
 #include "huffman_archivator.h"
 
 #include <bitset>
+#include <cmath>
 #include <exception>
 #include <iostream>
 
@@ -12,8 +13,10 @@ void HuffmanArchivator::compress(
 
     std::unordered_map<char, int> char_frequency;
     char ch;
+    size_t total_chars = 0;
     while (input_file.get(ch)) {
         char_frequency[ch]++;
+        total_chars++;
     }
 
     if (char_frequency.empty()) {
@@ -32,6 +35,12 @@ void HuffmanArchivator::compress(
     WriteEncodedText(input_file, output_file, code_map);
     input_file.close();
     output_file.close();
+
+    double entropy = CalculateEntropy(char_frequency, total_chars);
+    double avg_code_length =
+        CalculateAverageCodeLength(code_map, char_frequency, total_chars);
+
+    codding_efficiency_ = entropy / avg_code_length;
 }
 
 void HuffmanArchivator::decompress(
@@ -140,6 +149,30 @@ void HuffmanArchivator::WriteEncodedText(std::ifstream& input_file,
         char byte = static_cast<char>(bits.to_ulong());
         output_file.put(byte);
     }
+}
+
+double HuffmanArchivator::CalculateEntropy(
+    const std::unordered_map<char, int>& char_frequency,
+    size_t total_chars) const {
+    double entropy = 0.0;
+    for (const auto& [symbol, freq] : char_frequency) {
+        double probability = static_cast<double>(freq) / total_chars;
+        entropy -= probability * std::log2(probability);
+    }
+    return entropy;
+}
+
+double HuffmanArchivator::CalculateAverageCodeLength(
+    const huffman_code_map& code_map,
+    const std::unordered_map<char, int>& char_frequency,
+    size_t total_chars) const {
+    double avg_length = 0.0;
+    for (const auto& [symbol, code] : code_map) {
+        double probability =
+            static_cast<double>(char_frequency.at(symbol)) / total_chars;
+        avg_length += probability * code.size();
+    }
+    return avg_length;
 }
 
 void HuffmanArchivator::ReadHeader(std::ifstream& input_file,

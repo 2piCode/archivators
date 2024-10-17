@@ -16,6 +16,8 @@ class HuffmanArchivator : public Archivator {
     void decompress(const std::filesystem::path& input_file_path,
                     const std::filesystem::path& output_file_path) override;
 
+    double GetRelativeCodingEfficiency() const { return codding_efficiency_; }
+
    private:
     struct HuffmanNode {
         char data = '\0';
@@ -49,6 +51,8 @@ class HuffmanArchivator : public Archivator {
 
     static constexpr std::size_t BIT_PER_SYMBOL = 8;
 
+    double codding_efficiency_ = 0.0;
+
     std::shared_ptr<HuffmanNode> FormHuffmanTree(
         const std::unordered_map<char, int>& char_frequency) const;
     void BuildCodeMap(const std::shared_ptr<HuffmanNode>& root,
@@ -58,6 +62,13 @@ class HuffmanArchivator : public Archivator {
                      const huffman_code_map& code_map) const;
     void WriteEncodedText(std::ifstream& input_file, std::ofstream& output_file,
                           huffman_code_map& code_map) const;
+
+    double CalculateEntropy(const std::unordered_map<char, int>& char_frequency,
+                            size_t total_chars) const;
+    double CalculateAverageCodeLength(
+        const huffman_code_map& code_map,
+        const std::unordered_map<char, int>& char_frequency,
+        size_t total_chars) const;
 
     void ReadHeader(std::ifstream& input_file,
                     huffman_code_map& out_code_map) const;

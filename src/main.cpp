@@ -22,17 +22,17 @@ void CompressAndDecompress(const std::filesystem::path& input_file,
     std::unique_ptr<Archivator> archivator =
         std::make_unique<ArchivatorChild>();
 
-    std::filesystem::path compressed_huffman_file =
+    std::filesystem::path compressed_file =
         AddPostfix(output_compress_file, std::move(postfix));
-    std::filesystem::path decompressed_huffman_file =
+    std::filesystem::path decompressed_file =
         AddPostfix(output_decompress_file, std::move(postfix));
 
     {
         LOG_DURATION("\tCompress time:");
-        archivator->compress(input_file, compressed_huffman_file);
+        archivator->compress(input_file, compressed_file);
     }
     auto compressed_file_size =
-        std::filesystem::file_size(compressed_huffman_file);
+        std::filesystem::file_size(compressed_file);
     std::cout << "\tCompressed file size: " << compressed_file_size
               << std::endl;
     double reduction = static_cast<double>(input_file_size) -
@@ -43,13 +43,20 @@ void CompressAndDecompress(const std::filesystem::path& input_file,
     std::cout << "\tCompression percentage: " << compression_percentage << "%"
               << std::endl;
 
+    if (auto huffman_archivator =
+            dynamic_cast<HuffmanArchivator*>(archivator.get())) {
+        std::cout << "\tRelative coding efficiency: "
+                  << huffman_archivator->GetRelativeCodingEfficiency()
+                  << std::endl;
+    }
+
     {
         LOG_DURATION("\tDecompress time:");
-        archivator->decompress(compressed_huffman_file,
-                               decompressed_huffman_file);
+        archivator->decompress(compressed_file,
+                               decompressed_file);
     }
     std::cout << "\tDecompressed file size: "
-              << std::filesystem::file_size(decompressed_huffman_file)
+              << std::filesystem::file_size(decompressed_file)
               << std::endl;
 }
 
