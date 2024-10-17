@@ -1,5 +1,7 @@
 # Видео
 
+Использовалось 24 бита на символ для алгоритма Хаффмана
+
 ## https://www.videvo.net/video/raindrops-in-super-slow-motion/3313/
 ```bash
 Input file size: 22175508
@@ -8,10 +10,11 @@ Input file size: 22175508
 
 ### Алгоритм Хафмана
 ```bash
-Compress time:: 3937 ms
-Compressed file size: 22179873
-Compression percentage: -0.0196839%
-Decompress time:: 6666 ms
+Compress time:: 4918 ms
+Compressed file size: 7396201
+Compression percentage: 66.647%
+Relative coding efficiency: 0.99999
+Decompress time:: 7150 ms
 Decompressed file size: 22175508
 ```
 
@@ -33,10 +36,11 @@ Input file size: 231933787
 
 ### Алгоритм Хафмана
 ```bash
-Compress time:: 41691 ms
-Compressed file size: 231938152
-Compression percentage: -0.001882%
-Decompress time:: 69162 ms
+Compress time:: 51601 ms
+Compressed file size: 77315627
+Compression percentage: 66.6648%
+Relative coding efficiency: 0.999999
+Decompress time:: 73310 ms
 Decompressed file size: 231933787
 ```
 
@@ -58,10 +62,11 @@ Input file size: 276047311
 
 ### Алгоритм Хафмана
 ```bash
-Compress time:: 50649 ms
-Compressed file size: 276051676
-Compression percentage: -0.00158125%
-Decompress time:: 84537 ms
+Compress time:: 61530 ms
+Compressed file size: 92020135
+Compression percentage: 66.6651%
+Relative coding efficiency: 0.999998
+Decompress time:: 88108 ms
 Decompressed file size: 276047311
 ```
 

@@ -49,7 +49,7 @@ class HuffmanArchivator : public Archivator {
     const char LEFT_BRANCH_KEY = '0';
     const char RIGHT_BRANCH_KEY = '1';
 
-    static constexpr std::size_t BIT_PER_SYMBOL = 8;
+    static constexpr std::size_t BIT_PER_SYMBOL = 24;
 
     double codding_efficiency_ = 0.0;
 
